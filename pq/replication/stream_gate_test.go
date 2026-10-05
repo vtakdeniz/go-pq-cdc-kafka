@@ -18,11 +18,12 @@ import (
 
 // gatedStream wires a stream to a scripted guard and records what the listener saw.
 type gatedStream struct {
-	s        *stream
-	q        *scriptedQuery
-	m        *countingMetric
-	received []uint32 // xids delivered to the listener
-	commits  []pq.LSN // CommitLSN seen by the listener, in delivery order
+	s           *stream
+	q           *scriptedQuery
+	m           *countingMetric
+	received    []uint32 // xids delivered to the listener
+	commits     []pq.LSN // CommitLSN seen by the listener, in delivery order
+	contextXids []uint32 // ListenerContext.Xid, in delivery order
 }
 
 func newGatedStream(t *testing.T, cfg config.Config, rows [][]string) *gatedStream {
@@ -32,6 +33,7 @@ func newGatedStream(t *testing.T, cfg config.Config, rows [][]string) *gatedStre
 	gs.s = NewStream("", cfg, nil, func(ctx *ListenerContext) {
 		gs.received = append(gs.received, ctx.Message.(*format.Insert).XID)
 		gs.commits = append(gs.commits, ctx.CommitLSN)
+		gs.contextXids = append(gs.contextXids, ctx.Xid)
 		_ = ctx.Ack()
 	}).(*stream)
 	guard, m := testGuard(gs.q.query)
@@ -149,6 +151,7 @@ func TestGateDisabledDoesNotTouchGuard(t *testing.T) {
 	require.NoError(t, gs.run(insertMsg(200, 1)))
 	assert.Equal(t, []uint32{200}, gs.received)
 	assert.Equal(t, []pq.LSN{200}, gs.commits, "ListenerContext.CommitLSN comes from Message.commitLSN")
+	assert.Equal(t, []uint32{200}, gs.contextXids, "ListenerContext.Xid comes from Message.xid")
 	assert.Equal(t, int32(0), gs.q.calls.Load())
 }
 
@@ -243,4 +246,35 @@ type closeRecorderConn struct {
 func (c *closeRecorderConn) Close(ctx context.Context) error {
 	c.onClose()
 	return c.standbyCaptureConn.Close(ctx)
+}
+
+func TestListenerContextExposesXidAcrossTransaction(t *testing.T) {
+	gs := newGatedStream(t, config.Config{}, nil)
+	gs.s.guard = nil
+
+	require.NoError(t, gs.run(
+		txMsg(42, 10, 1000),
+		txMsg(42, 11, 1000),
+		txMsg(99, 20, 2000),
+	))
+
+	assert.Equal(t, []uint32{42, 42, 99}, gs.received)
+	assert.Equal(t, []uint32{42, 42, 99}, gs.contextXids, "ListenerContext.Xid must match the stream's top-level xid")
+	assert.Equal(t, []pq.LSN{1000, 1000, 2000}, gs.commits)
+}
+
+func TestListenerContextXidZeroWhenMessageHasNoTransaction(t *testing.T) {
+	gs := newGatedStream(t, config.Config{}, nil)
+	gs.s.guard = nil
+
+	require.NoError(t, gs.run(&Message{
+		message:   &format.Insert{TableName: "books"},
+		walStart:  7,
+		xid:       0,
+		commitLSN: 0,
+	}))
+
+	assert.Equal(t, []uint32{0}, gs.received)
+	assert.Equal(t, []uint32{0}, gs.contextXids, "snapshot-like messages keep Xid at 0")
+	assert.Equal(t, []pq.LSN{0}, gs.commits)
 }
