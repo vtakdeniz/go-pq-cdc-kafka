@@ -1,5 +1,3 @@
-github.com/KellPro/go-pq-cdc v0.0.0-20260928171354-109bb94dd9ed h1:uHeFWR7k5E46bV7dcj/swwUt7ERf/BoxSiY6DeSdas8=
-github.com/KellPro/go-pq-cdc v0.0.0-20260928171354-109bb94dd9ed/go.mod h1:a0Z9SANfTzs/5tQyBq2cUCkzyW2rgDrdpQuegKKSx34=
 github.com/avast/retry-go/v4 v4.6.0 h1:K9xNA+KeB8HHc2aWFuLb25Offp+0iVRXEvFx8IinRJA=
 github.com/avast/retry-go/v4 v4.6.0/go.mod h1:gvWlPhBVsvBbLkVGDg/KwvBv0bEkCOLRRSHKIr2PyOE=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
@@ -56,6 +54,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
+github.com/vtakdeniz/go-pq-cdc-kafka v0.0.0-20261005193026-fd7107ee21f4 h1:R1KGZT0PkvGTjQy4m0RmOhsdRf0TPRyVbiU8Ne5hTn4=
+github.com/vtakdeniz/go-pq-cdc-kafka v0.0.0-20261005193026-fd7107ee21f4/go.mod h1:a0Z9SANfTzs/5tQyBq2cUCkzyW2rgDrdpQuegKKSx34=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

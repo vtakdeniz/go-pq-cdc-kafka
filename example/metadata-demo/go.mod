@@ -36,5 +36,5 @@ require (
 
 replace github.com/Trendyol/go-pq-cdc-kafka => ../..
 
-// Temporary: ListenerContext.Xid from Trendyol/go-pq-cdc#182
-replace github.com/Trendyol/go-pq-cdc => github.com/KellPro/go-pq-cdc v0.0.0-20260928171354-109bb94dd9ed
+// Temporary: ListenerContext.Xid hosted on cursor/expose-listener-xid-fb7d until upstream
+replace github.com/Trendyol/go-pq-cdc => github.com/vtakdeniz/go-pq-cdc-kafka v0.0.0-20261005193026-fd7107ee21f4

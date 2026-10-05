@@ -83,4 +83,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/Trendyol/go-pq-cdc => github.com/KellPro/go-pq-cdc v0.0.0-20260928171354-109bb94dd9ed
+// Temporary: ListenerContext.Xid on cursor/expose-listener-xid-fb7d (our conflict-free #182); drop when upstream lands
+replace github.com/Trendyol/go-pq-cdc => github.com/vtakdeniz/go-pq-cdc-kafka v0.0.0-20261005193026-fd7107ee21f4
