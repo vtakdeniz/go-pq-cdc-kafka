@@ -37,6 +37,6 @@ go run ./cmd/web
 ## Notes
 
 - Both tables map to the same topic; the Kafka key is the transaction id so they share a partition.
-- This demo depends on the temporary `replace` of `go-pq-cdc` to `cursor/expose-listener-xid-fb7d` in this repo (conflict-free `ListenerContext.Xid`; see PR #4). Upstream Trendyol/go-pq-cdc#182 is still conflicting.
+- Uses released `go-pq-cdc` ≥ v1.12.15 (`ListenerContext.Xid` from Trendyol/go-pq-cdc#188).
 - If Postgres was started before `init.sql` existed, recreate volumes: `docker compose down -v && docker compose up -d`
 - If Kafka UI stays offline on Linux Docker, switch the `kafka-ui` service to `network_mode: host`, set `SERVER_PORT=8085`, and `KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=127.0.0.1:19092` (remove the `ports:` mapping). Docker Desktop on macOS should use the default bridge settings above.

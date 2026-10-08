@@ -3,7 +3,7 @@ module github.com/Trendyol/go-pq-cdc-kafka/example/metadata-demo
 go 1.25.0
 
 require (
-	github.com/Trendyol/go-pq-cdc v1.11.14
+	github.com/Trendyol/go-pq-cdc v1.12.15
 	github.com/Trendyol/go-pq-cdc-kafka v0.0.0
 	github.com/lib/pq v1.10.9
 	github.com/segmentio/kafka-go v0.4.51
@@ -35,6 +35,3 @@ require (
 )
 
 replace github.com/Trendyol/go-pq-cdc-kafka => ../..
-
-// Temporary: ListenerContext.Xid hosted on cursor/expose-listener-xid-fb7d until upstream
-replace github.com/Trendyol/go-pq-cdc => github.com/vtakdeniz/go-pq-cdc-kafka v0.0.0-20261005193026-fd7107ee21f4
