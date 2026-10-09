@@ -36,3 +36,10 @@ gopqcdcpq.WithTablePrimaryKeys(map[string]string{
 ## License
 
 MIT
+
+## Change Metadata
+
+`Message.LSN` is the WAL position of the change (Postgres `X/Y` text form).
+
+`Message.TransactionID` is the top-level PostgreSQL transaction that produced the change (`ListenerContext.Xid`), and `0` for snapshot events. It is 32-bit and wraps around: use it to group related changes; compare `LSN` to order them.
+

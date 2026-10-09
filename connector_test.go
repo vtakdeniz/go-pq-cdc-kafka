@@ -210,6 +210,7 @@ func TestConnectorProcessMessageInsert(t *testing.T) {
 	replCtx := &replication.ListenerContext{
 		Message: insertMsg,
 		Ack:     ack,
+		Xid:     4711,
 	}
 
 	conn.processMessage(ctx, replCtx)
@@ -220,6 +221,7 @@ func TestConnectorProcessMessageInsert(t *testing.T) {
 		assert.Equal(t, "users", msg.Table)
 		assert.Equal(t, "public", msg.Schema)
 		assert.Equal(t, "INSERT", msg.Action)
+		assert.Equal(t, uint32(4711), msg.TransactionID)
 		assert.NotEmpty(t, msg.Query)
 		assert.NotNil(t, msg.Args)
 		assert.NotNil(t, msg.NewValues)
@@ -356,7 +358,7 @@ func TestConnectorProcessSnapshotDataMessage(t *testing.T) {
 		},
 	}
 
-	conn.processSnapshotMessage(ctx, snapshotMsg, ack)
+	conn.processSnapshotMessage(ctx, snapshotMsg, ack, 0)
 
 	select {
 	case msg := <-messages:
@@ -392,7 +394,7 @@ func TestConnectorProcessSnapshotBeginAck(t *testing.T) {
 		EventType: format.SnapshotEventTypeBegin,
 	}
 
-	conn.processSnapshotMessage(ctx, snapshotMsg, ack)
+	conn.processSnapshotMessage(ctx, snapshotMsg, ack, 0)
 
 	assert.True(t, ackCalled, "snapshot begin should be acked immediately")
 }
@@ -415,7 +417,7 @@ func TestConnectorProcessSnapshotEndAck(t *testing.T) {
 		EventType: format.SnapshotEventTypeEnd,
 	}
 
-	conn.processSnapshotMessage(ctx, snapshotMsg, ack)
+	conn.processSnapshotMessage(ctx, snapshotMsg, ack, 0)
 
 	assert.True(t, ackCalled, "snapshot end should be acked immediately")
 }
@@ -550,13 +552,14 @@ func TestConnectorProcessInsertMessage(t *testing.T) {
 		},
 	}
 
-	conn.processInsertMessage(ctx, insertMsg, ack)
+	conn.processInsertMessage(ctx, insertMsg, ack, 4711)
 
 	select {
 	case msg := <-messages:
 		assert.Equal(t, "users", msg.Table)
 		assert.Equal(t, "public", msg.Schema)
 		assert.Equal(t, "INSERT", msg.Action)
+		assert.Equal(t, uint32(4711), msg.TransactionID)
 		assert.NotEmpty(t, msg.Query)
 		assert.Contains(t, msg.Query, "INSERT INTO")
 		assert.NotNil(t, msg.NewValues)
@@ -591,7 +594,7 @@ func TestConnectorProcessDeleteMessage(t *testing.T) {
 		},
 	}
 
-	conn.processDeleteMessage(ctx, deleteMsg, ack)
+	conn.processDeleteMessage(ctx, deleteMsg, ack, 4711)
 
 	select {
 	case msg := <-messages:
@@ -636,7 +639,7 @@ func TestConnectorProcessUpdateMessage(t *testing.T) {
 		},
 	}
 
-	conn.processUpdateMessage(ctx, updateMsg, ack)
+	conn.processUpdateMessage(ctx, updateMsg, ack, 4711)
 
 	select {
 	case msg := <-messages:

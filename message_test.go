@@ -331,6 +331,25 @@ func TestNewMessageCopiesLSN(t *testing.T) {
 	assert.Equal(t, want, NewSnapshotMessage(&format.Snapshot{LSN: lsn}).LSN)
 }
 
+func TestMessageCarriesTransactionID(t *testing.T) {
+	const xid uint32 = 4711
+
+	insert := NewInsertMessage(&format.Insert{})
+	insert.TransactionID = xid
+	assert.Equal(t, xid, insert.TransactionID)
+
+	update := NewUpdateMessage(&format.Update{})
+	update.TransactionID = xid
+	assert.Equal(t, xid, update.TransactionID)
+
+	del := NewDeleteMessage(&format.Delete{})
+	del.TransactionID = xid
+	assert.Equal(t, xid, del.TransactionID)
+
+	snap := NewSnapshotMessage(&format.Snapshot{})
+	assert.Equal(t, uint32(0), snap.TransactionID)
+}
+
 func TestNewDeleteMessageWithNilOldDecoded(t *testing.T) {
 	now := time.Now()
 	deleteMsg := &format.Delete{
